@@ -141,6 +141,11 @@ class InverseNormalizer(Normalizer):
             from nemo_text_processing.inverse_text_normalization.ko.verbalizers.verbalize_final import (
                 VerbalizeFinalFst,
             )
+        elif lang == 'bn':  # Bengali
+            from nemo_text_processing.inverse_text_normalization.bn.taggers.tokenize_and_classify import ClassifyFst
+            from nemo_text_processing.inverse_text_normalization.bn.verbalizers.verbalize_final import (
+                VerbalizeFinalFst,
+            )
         else:
             raise NotImplementedError(f"Language {lang} has not been supported yet.")
 
