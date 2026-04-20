@@ -146,6 +146,21 @@ class InverseNormalizer(Normalizer):
             from nemo_text_processing.inverse_text_normalization.bn.verbalizers.verbalize_final import (
                 VerbalizeFinalFst,
             )
+        elif lang == 'pa':  # Punjabi (ਪੰਜਾਬੀ)
+            from nemo_text_processing.inverse_text_normalization.pa.taggers.tokenize_and_classify import ClassifyFst
+            from nemo_text_processing.inverse_text_normalization.pa.verbalizers.verbalize_final import (
+                VerbalizeFinalFst,
+            )
+        elif lang == 'ta':  # Tamil (தமிழ்)
+            from nemo_text_processing.inverse_text_normalization.ta.taggers.tokenize_and_classify import ClassifyFst
+            from nemo_text_processing.inverse_text_normalization.ta.verbalizers.verbalize_final import (
+                VerbalizeFinalFst,
+            )
+        elif lang == 'ml':  # Malayalam (മലയാളം)
+            from nemo_text_processing.inverse_text_normalization.ml.taggers.tokenize_and_classify import ClassifyFst
+            from nemo_text_processing.inverse_text_normalization.ml.verbalizers.verbalize_final import (
+                VerbalizeFinalFst,
+            )
         else:
             raise NotImplementedError(f"Language {lang} has not been supported yet.")
 
@@ -210,6 +225,10 @@ def parse_args():
             'mr',
             'ja',
             'ko',
+            'bn',
+            'pa',
+            'ta',
+            'ml',
         ],
         default="en",
         type=str,

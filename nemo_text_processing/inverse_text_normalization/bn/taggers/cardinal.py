@@ -52,17 +52,18 @@ class CardinalFst(GraphFst):
         self.graph_teens_and_ties = graph_teens_and_ties
         self.graph_two_digit = graph_teens_and_ties | (pynutil.insert("০") + graph_digit)
         
-        # Bengali: শত (shoto) for hundred
+        # Bengali: শত (shoto) for hundred (including English and Hindi)
         graph_hundred = (
-            pynini.cross("শত", "") | pynini.cross("শো", "") | pynini.cross("শ", "")
+            pynini.cross("শত", "") | pynini.cross("শো", "") | pynini.cross("শ", "") | 
+            pynini.cross("হান্ড্রেড", "") | pynini.cross("সও", "") | pynini.cross("সো", "")
         )
-        delete_hundred = pynutil.delete("শত") | pynutil.delete("শো") | pynutil.delete("শ")
+        delete_hundred = pynutil.delete("শত") | pynutil.delete("শো") | pynutil.delete("শ") | pynutil.delete("হান্ড্রেড") | pynutil.delete("সও") | pynutil.delete("সো")
         
         # Bengali compound hundreds: একশো, নয়শো, etc.
         graph_compound_hundred = pynini.string_file(get_abs_path("data/numbers/compound_hundreds.tsv")).invert()
         
-        # Bengali: হাজার (hajar) for thousand
-        delete_thousand = pynutil.delete("হাজার")
+        # Bengali: হাজার (hajar) for thousand (including English)
+        delete_thousand = pynutil.delete("হাজার") | pynutil.delete("থাউজান্ড") | pynutil.delete("থাউজেন্ড")
         
         # Three-digit component (hundreds place)
         graph_hundred_component = pynini.union(
