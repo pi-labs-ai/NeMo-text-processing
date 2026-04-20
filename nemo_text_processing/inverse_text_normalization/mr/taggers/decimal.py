@@ -32,7 +32,9 @@ def get_quantity(decimal, cardinal_fst):
         pynutil.delete(pynini.closure("०")) + pynini.difference(NEMO_DIGIT, "०") + pynini.closure(NEMO_DIGIT)
     )
     suffix_labels = load_labels(get_abs_path("/data/numbers/thousands.tsv"))
-    suffix_labels = [x[0] for x in suffix_labels if x[0] != "हजार"]
+    # Exclude thousand words (हजार, थाउजंड, थाऊसंड) - these are handled by cardinal, not quantity suffix
+    exclude_thousands = {"हजार", "थाउजंड", "थाऊसंड"}
+    suffix_labels = [x[0] for x in suffix_labels if x[0] not in exclude_thousands]
     suffix = pynini.union(*suffix_labels).optimize()
 
     res = (

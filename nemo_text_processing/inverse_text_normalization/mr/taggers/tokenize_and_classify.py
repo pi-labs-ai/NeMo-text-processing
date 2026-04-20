@@ -29,6 +29,7 @@ from nemo_text_processing.inverse_text_normalization.mr.graph_utils import (
 from nemo_text_processing.inverse_text_normalization.mr.taggers.cardinal import CardinalFst
 from nemo_text_processing.inverse_text_normalization.mr.taggers.date import DateFst
 from nemo_text_processing.inverse_text_normalization.mr.taggers.decimal import DecimalFst
+from nemo_text_processing.inverse_text_normalization.mr.taggers.ordinal import OrdinalFst
 from nemo_text_processing.inverse_text_normalization.mr.taggers.punctuation import PunctuationFst
 from nemo_text_processing.inverse_text_normalization.mr.taggers.time import TimeFst
 from nemo_text_processing.inverse_text_normalization.mr.taggers.word import WordFst
@@ -68,6 +69,7 @@ class ClassifyFst(GraphFst):
             cardinal = CardinalFst()
             cardinal_graph = cardinal.fst
             decimal_graph = DecimalFst(cardinal).fst
+            ordinal_graph = OrdinalFst(cardinal).fst
             time_graph = TimeFst().fst
             date_graph = DateFst(cardinal).fst
 
@@ -76,6 +78,7 @@ class ClassifyFst(GraphFst):
             classify = (
                 pynutil.add_weight(cardinal_graph, 1.1)
                 | pynutil.add_weight(decimal_graph, 1.1)
+                | pynutil.add_weight(ordinal_graph, 1.08)
                 | pynutil.add_weight(time_graph, 1.1)
                 | pynutil.add_weight(date_graph, 1.09)
                 | pynutil.add_weight(word_graph, 100)

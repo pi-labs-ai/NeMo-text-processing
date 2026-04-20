@@ -50,9 +50,9 @@ class CardinalFst(GraphFst):
         self.graph_single_digit_with_zero = pynutil.insert("०") + graph_digit
         self.graph_teens_and_ties = graph_teens_and_ties
         self.graph_two_digit = graph_teens_and_ties | (pynutil.insert("०") + graph_digit)
-        graph_hundred = pynini.cross("सौ", "")
-        delete_hundred = pynutil.delete("सौ")
-        delete_thousand = pynutil.delete("हज़ार") | pynutil.delete("हजार")
+        graph_hundred = pynini.cross("सौ", "") | pynini.cross("हंड्रेड", "")
+        delete_hundred = pynutil.delete("सौ") | pynutil.delete("हंड्रेड")
+        delete_thousand = pynutil.delete("हज़ार") | pynutil.delete("हजार") | pynutil.delete("थाउज़ैंड") | pynutil.delete("थाउजेंड")
         graph_hundred_component = pynini.union(graph_digit + delete_space + graph_hundred, pynutil.insert("०"))
         graph_hundred_component += delete_space
         graph_hundred_component += self.graph_two_digit | pynutil.insert("००")

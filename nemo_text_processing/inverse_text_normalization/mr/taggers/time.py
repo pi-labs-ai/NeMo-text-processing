@@ -98,6 +98,7 @@ class TimeFst(GraphFst):
             + pynutil.insert("hours: \"")
             + hours_to
             + pynutil.insert("\"")
+            + pynini.closure(pynini.cross("ला", ""), 0, 1)
             + pynutil.insert(" ")
             + pynutil.insert("minutes: \"")
             + pynutil.insert("४५")

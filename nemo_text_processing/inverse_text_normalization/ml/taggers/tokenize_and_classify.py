@@ -1,0 +1,131 @@
+# Copyright (c) 2024, NVIDIA CORPORATION.  All rights reserved.
+# Copyright 2024 and onwards Google, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+import pynini
+from pynini.lib import pynutil
+
+from nemo_text_processing.inverse_text_normalization.ml.graph_utils import (
+    INPUT_LOWER_CASED,
+    GraphFst,
+    delete_extra_space,
+    delete_space,
+    insert_space,
+    NEMO_SIGMA,
+    NEMO_WHITE_SPACE,
+)
+from nemo_text_processing.inverse_text_normalization.ml.taggers.cardinal import CardinalFst
+from nemo_text_processing.inverse_text_normalization.ml.taggers.date import DateFst
+from nemo_text_processing.inverse_text_normalization.ml.taggers.decimal import DecimalFst
+from nemo_text_processing.inverse_text_normalization.ml.taggers.fraction import FractionFst
+from nemo_text_processing.inverse_text_normalization.ml.taggers.measure import MeasureFst
+from nemo_text_processing.inverse_text_normalization.ml.taggers.money import MoneyFst
+from nemo_text_processing.inverse_text_normalization.ml.taggers.ordinal import OrdinalFst
+from nemo_text_processing.inverse_text_normalization.ml.taggers.punctuation import PunctuationFst
+from nemo_text_processing.inverse_text_normalization.ml.taggers.telephone import TelephoneFst
+from nemo_text_processing.inverse_text_normalization.ml.taggers.time import TimeFst
+from nemo_text_processing.inverse_text_normalization.ml.taggers.whitelist import WhiteListFst
+from nemo_text_processing.inverse_text_normalization.ml.taggers.word import WordFst
+
+
+class ClassifyFst(GraphFst):
+    """
+    Final class that composes all other classification grammars. This class can process an entire sentence.
+    For deployment, this grammar will be compiled and exported to OpenFst Finate State Archive (FAR) File.
+
+    Args:
+        cache_dir: path to a dir with .far grammar file. Set to None to avoid using cache.
+        overwrite_cache: set to True to overwrite .far files
+        whitelist: path to a file with whitelist replacements
+        input_case: accepting either "lower_cased" or "cased" input.
+    """
+
+    def __init__(
+        self,
+        cache_dir: str = None,
+        overwrite_cache: bool = False,
+        whitelist: str = None,
+        input_case: str = INPUT_LOWER_CASED,
+    ):
+        super().__init__(name="tokenize_and_classify", kind="classify")
+
+        # Build all taggers
+        cardinal = CardinalFst(input_case=input_case)
+        cardinal_graph = cardinal.fst
+
+        ordinal = OrdinalFst(cardinal=cardinal)
+        ordinal_graph = ordinal.fst
+
+        decimal = DecimalFst(cardinal=cardinal)
+        decimal_graph = decimal.fst
+
+        fraction = FractionFst(cardinal=cardinal)
+        fraction_graph = fraction.fst
+
+        measure = MeasureFst(cardinal=cardinal, decimal=decimal)
+        measure_graph = measure.fst
+
+        money = MoneyFst(cardinal=cardinal, decimal=decimal)
+        money_graph = money.fst
+
+        time_graph = TimeFst(cardinal=cardinal)
+        time_graph = time_graph.fst
+
+        date_graph = DateFst(cardinal=cardinal, ordinal=ordinal)
+        date_graph = date_graph.fst
+
+        telephone_graph = TelephoneFst(cardinal=cardinal)
+        telephone_graph = telephone_graph.fst
+
+        whitelist_graph = WhiteListFst(input_case=input_case)
+        whitelist_graph = whitelist_graph.fst
+
+        punct_graph = PunctuationFst()
+        punct_graph = punct_graph.fst
+
+        word_graph = WordFst()
+        word_graph = word_graph.fst
+
+        # Order matters - more specific patterns first
+        classify = (
+            pynutil.add_weight(whitelist_graph, 1.01)
+            | pynutil.add_weight(time_graph, 1.1)
+            | pynutil.add_weight(date_graph, 1.1)
+            | pynutil.add_weight(measure_graph, 1.1)
+            | pynutil.add_weight(money_graph, 1.1)
+            | pynutil.add_weight(decimal_graph, 1.1)
+            | pynutil.add_weight(fraction_graph, 1.1)
+            | pynutil.add_weight(ordinal_graph, 1.1)
+            | pynutil.add_weight(telephone_graph, 1.5)
+            | pynutil.add_weight(cardinal_graph, 1.1)
+            | pynutil.add_weight(word_graph, 100)
+        )
+
+        punct = (
+            pynutil.insert("tokens { ")
+            + pynutil.add_weight(punct_graph, 1.1)
+            + pynutil.insert(" }")
+        )
+
+        token = pynutil.insert("tokens { ") + classify + pynutil.insert(" }")
+        token_plus_punct = (
+            pynini.closure(punct + insert_space)
+            + token
+            + pynini.closure(insert_space + punct)
+        )
+
+        graph = token_plus_punct + pynini.closure(delete_extra_space + token_plus_punct)
+        graph = delete_space + graph + delete_space
+
+        self.fst = graph.optimize()

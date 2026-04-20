@@ -38,12 +38,21 @@ class CardinalFst(GraphFst):
         graph_digits = pynini.string_file(get_abs_path("data/numbers/digits.tsv")).invert()
         graph_tens = pynini.string_file(get_abs_path("data/numbers/tens.tsv")).invert()
         graph_hundred_unique = pynini.string_file(get_abs_path("data/numbers/hundred.tsv")).invert()
+         
+        # For English-style compound numbers like "sixty seven" = 67
+        graph_tens_prefix = pynini.string_file(get_abs_path("data/numbers/tens_prefix.tsv")).invert()
+        graph_english_two_digit = graph_tens_prefix + delete_space + graph_digits
+        
+        # Combined tens graph: native (single word) OR English-style (tens + ones)
+        graph_tens_combined = graph_tens | graph_english_two_digit
 
-        graph_hundred = pynini.cross("शे", "")
+        graph_hundred = pynini.cross("शे", "") | pynini.cross("हंड्रेड", "") | pynini.cross("सौ", "")
 
-        graph_hundred_component = pynini.union(graph_digits + graph_hundred, pynutil.insert("०"))
-        graph_hundred_component += delete_space
-        graph_hundred_component += pynini.union(pynutil.insert("००"), graph_tens, pynutil.insert("०") + graph_digits)
+        graph_hundred_component = pynini.union(graph_digits + delete_space + graph_hundred, pynutil.insert("०"))
+        graph_hundred_component += pynini.union(
+            delete_space + pynini.union(graph_tens_combined, pynutil.insert("०") + graph_digits),
+            pynutil.insert("००")
+        )
 
         graph_hundred_component_at_least_one_non_zero_digit = graph_hundred_component @ (
             pynini.closure(NEMO_DIGIT) + (NEMO_DIGIT - "०") + pynini.closure(NEMO_DIGIT)
@@ -51,14 +60,15 @@ class CardinalFst(GraphFst):
         self.graph_hundred_component_at_least_one_non_zero_digit = graph_hundred_component_at_least_one_non_zero_digit
 
         # eleven hundred -> 1100 etc form
-        graph_hundred_as_thousand = graph_tens + graph_hundred
-        graph_hundred_as_thousand += delete_space + pynini.union(
-            pynutil.insert("००"), graph_tens, pynutil.insert("०") + graph_digits
+        graph_hundred_as_thousand = graph_tens_combined + delete_space + graph_hundred
+        graph_hundred_as_thousand += pynini.union(
+            delete_space + pynini.union(graph_tens_combined, pynutil.insert("०") + graph_digits),
+            pynutil.insert("००")
         )
 
         graph_hundreds = graph_hundred_component | graph_hundred_as_thousand
 
-        graph_two_digit_component = pynini.union(pynutil.insert("००"), graph_tens, pynutil.insert("०") + graph_digits)
+        graph_two_digit_component = pynini.union(pynutil.insert("००"), graph_tens_combined, pynutil.insert("०") + graph_digits)
 
         graph_two_digit_component_at_least_one_non_zero_digit = graph_two_digit_component @ (
             pynini.closure(NEMO_DIGIT) + (NEMO_DIGIT - "०") + pynini.closure(NEMO_DIGIT)
@@ -67,8 +77,10 @@ class CardinalFst(GraphFst):
             graph_two_digit_component_at_least_one_non_zero_digit
         )
 
+        delete_thousand = pynutil.delete("हजार") | pynutil.delete("थाउजंड") | pynutil.delete("थाऊसंड")
+        
         graph_thousands = pynini.union(
-            graph_two_digit_component_at_least_one_non_zero_digit + delete_space + pynutil.delete("हजार"),
+            graph_two_digit_component_at_least_one_non_zero_digit + delete_space + delete_thousand,
             pynutil.insert("००", weight=0.1),
         )
 
