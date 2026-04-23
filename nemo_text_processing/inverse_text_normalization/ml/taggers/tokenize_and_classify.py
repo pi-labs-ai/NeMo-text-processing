@@ -13,6 +13,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import logging
+import os
+
 import pynini
 from pynini.lib import pynutil
 
@@ -21,6 +24,7 @@ from nemo_text_processing.inverse_text_normalization.ml.graph_utils import (
     GraphFst,
     delete_extra_space,
     delete_space,
+    generator_main,
     insert_space,
     NEMO_SIGMA,
     NEMO_WHITE_SPACE,
@@ -60,6 +64,16 @@ class ClassifyFst(GraphFst):
     ):
         super().__init__(name="tokenize_and_classify", kind="classify")
 
+        far_file = None
+        if cache_dir is not None and cache_dir != "None":
+            os.makedirs(cache_dir, exist_ok=True)
+            far_file = os.path.join(cache_dir, f"ml_itn.far")
+        if not overwrite_cache and far_file and os.path.exists(far_file):
+            self.fst = pynini.Far(far_file, mode="r")["tokenize_and_classify"]
+            logging.info(f"ClassifyFst.fst was restored from {far_file}.")
+            return
+
+        logging.info(f"Creating ClassifyFst grammars for Malayalam.")
         # Build all taggers
         cardinal = CardinalFst(input_case=input_case)
         cardinal_graph = cardinal.fst
@@ -129,3 +143,5 @@ class ClassifyFst(GraphFst):
         graph = delete_space + graph + delete_space
 
         self.fst = graph.optimize()
+        if far_file:
+            generator_main(far_file, {"tokenize_and_classify": self.fst})
