@@ -1,0 +1,10 @@
+# Minimal dependencies for inference with pre-built .far files
+# 
+# IMPORTANT: pynini must be installed via conda FIRST:
+#   conda install -c conda-forge pynini
+#
+# Then install these:
+#   pip install -r requirements_inference.txt
+
+pynini>=2.1.5
+regex>=2023.0.0

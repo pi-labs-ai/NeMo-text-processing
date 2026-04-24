@@ -13,3 +13,11 @@
 # limitations under the License.
 
 from nemo_text_processing.inverse_text_normalization.inverse_normalize import InverseNormalizer
+
+# Lightweight inference using pre-built .far files (minimal dependencies)
+from nemo_text_processing.inverse_text_normalization.itn_inference import (
+    ITNInference,
+    inverse_normalize,
+)
+
+__all__ = ["InverseNormalizer", "ITNInference", "inverse_normalize"]

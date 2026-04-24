@@ -1,3 +1,9 @@
 include LICENSE
 include NEWS
 include requirements/*
+include pyproject.toml
+
+# Include pre-built grammar files for inference
+recursive-include nemo_text_processing *.far
+recursive-include nemo_text_processing *.tsv
+recursive-include nemo_text_processing *.txt

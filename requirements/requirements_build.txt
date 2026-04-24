@@ -1,0 +1,16 @@
+# Full dependencies for building grammars from source
+#
+# IMPORTANT: pynini must be installed via conda FIRST:
+#   conda install -c conda-forge pynini
+#
+# Then install these:
+#   pip install -r requirements_build.txt
+
+# Include inference deps
+-r requirements_inference.txt
+
+# Build-time dependencies
+joblib>=1.2.0
+sacremoses>=0.0.53
+tqdm>=4.64.0
+inflect>=6.0.0
