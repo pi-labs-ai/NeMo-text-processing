@@ -46,7 +46,7 @@ _FAR_DIR = os.path.join(os.path.dirname(__file__), "far_files")
 
 # Mapping of language codes to .far file names
 _FAR_FILES = {
-    "en": "en_itn.far",
+    "en": "en_itn_lower_cased.far",
     "hi": "hi_itn.far",
     "mr": "mr_itn.far",
     "pa": "pa_itn.far",
