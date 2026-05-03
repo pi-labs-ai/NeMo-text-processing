@@ -53,6 +53,7 @@ _FAR_FILES = {
     "ta": "ta_itn.far",
     "bn": "bn_itn.far",
     "ml": "ml_itn.far",
+    "zh": "zh_itn.far",
 }
 
 
@@ -64,7 +65,7 @@ class ITNInference:
     FST grammars and does not require build-time dependencies like joblib or sacremoses.
     
     Args:
-        lang: Language code (e.g., 'hi', 'en', 'mr', 'pa', 'ta', 'bn', 'ml')
+        lang: Language code (e.g., 'hi', 'en', 'mr', 'pa', 'ta', 'bn', 'ml', 'zh')
         far_dir: Optional path to directory containing .far files.
                  Defaults to the package's far_files/ directory.
     

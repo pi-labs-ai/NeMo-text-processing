@@ -25,6 +25,7 @@ LANGUAGES = {
     "bn": "bn_itn.far",
     "ml": "ml_itn.far",
     "en": "en_itn_lower_cased.far",
+    "zh": "zh_itn.far",
 }
 
 # Map lang -> (ClassifyFst module, VerbalizeFinalFst module)
@@ -56,6 +57,10 @@ LANG_MODULES = {
     "en": (
         "nemo_text_processing.inverse_text_normalization.en.taggers.tokenize_and_classify",
         "nemo_text_processing.inverse_text_normalization.en.verbalizers.verbalize_final",
+    ),
+    "zh": (
+        "nemo_text_processing.inverse_text_normalization.zh.taggers.tokenize_and_classify",
+        "nemo_text_processing.inverse_text_normalization.zh.verbalizers.verbalize_final",
     ),
 }
 

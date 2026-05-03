@@ -202,7 +202,7 @@ if __name__ == '__main__':
             VerbalizeFst as ITNVerbalizeFst,
         )
         from nemo_text_processing.text_normalization.fr.taggers.tokenize_and_classify import (
-            ClassifyFst as TNClassifyFst,
+            ClassifyFst as TNClassifyFst,  
         )
         from nemo_text_processing.text_normalization.fr.verbalizers.verbalize import VerbalizeFst as TNVerbalizeFst
     elif args.language == 'hi':
