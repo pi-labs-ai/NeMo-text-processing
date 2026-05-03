@@ -1,0 +1,23 @@
+[33mcommit 9faed6af816a6f1c77513804e0e024ff8137d6e3[m[33m ([m[1;36mHEAD -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m
+Author:     soham.borkar <soham.borkar@pi-labs.ai>
+AuthorDate: Sun May 3 14:41:12 2026 +0000
+Commit:     soham.borkar <soham.borkar@pi-labs.ai>
+CommitDate: Sun May 3 14:41:12 2026 +0000
+
+    fix: add zh to ITN .far rebuild; remove broken _zh_itn.far; rebuild all language .far files with tokenize_and_classify+verbalize
+
+[33mcommit a4a7cf94cec7cb606655771ab6c0eeea358bb145[m
+Author:     soham.borkar <soham.borkar@pi-labs.ai>
+AuthorDate: Sun May 3 14:11:55 2026 +0000
+Commit:     soham.borkar <soham.borkar@pi-labs.ai>
+CommitDate: Sun May 3 14:11:55 2026 +0000
+
+    fix: rebuild .far files with both tokenize_and_classify+verbalize FSTs; add rebuild script
+
+[33mcommit f97c35a25b9bf823a99737143e75d7810c3b22b6[m
+Author:     soham.borkar <soham.borkar@pi-labs.ai>
+AuthorDate: Sun Apr 26 21:39:49 2026 +0000
+Commit:     soham.borkar <soham.borkar@pi-labs.ai>
+CommitDate: Sun Apr 26 21:39:49 2026 +0000
+
+    fix: rename mr_itn.far.far -> mr_itn.far (remove double extension)

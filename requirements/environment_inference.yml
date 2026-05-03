@@ -1,0 +1,24 @@
+name: nemo_itn_inference
+channels:
+  - conda-forge
+  - defaults
+
+dependencies:
+  # Python version
+  - python=3.10
+
+  # pynini MUST be installed via conda (not pip)
+  - pynini>=2.1.5
+
+  # pip-installable dependencies
+  - pip
+  - pip:
+      # regex is used internally by pynini wrappers
+      - regex>=2023.0.0
+
+      # Install the custom NeMo-text-processing package
+      # Option A: from GitHub (use this in production/other services)
+      - git+https://github.com/pi-labs-ai/NeMo-text-processing.git
+
+      # Option B: local editable install (use this during development)
+      # - -e /path/to/NeMo-text-processing

@@ -1,10 +1,18 @@
-# Minimal dependencies for inference with pre-built .far files
-# 
-# IMPORTANT: pynini must be installed via conda FIRST:
+# Minimal dependencies for inference-only usage with pre-built .far files.
+#
+# IMPORTANT: pynini MUST be installed via conda FIRST (not pip):
 #   conda install -c conda-forge pynini
 #
-# Then install these:
-#   pip install -r requirements_inference.txt
+# Then install this file:
+#   pip install -r requirements/requirements_inference.txt
+#
+# Then install the package itself:
+#   pip install git+https://github.com/pi-labs-ai/NeMo-text-processing.git
+#   OR for local dev:
+#   pip install -e .
 
+# Core FST library (must already be conda-installed before running pip)
 pynini>=2.1.5
+
+# Regex used internally
 regex>=2023.0.0
