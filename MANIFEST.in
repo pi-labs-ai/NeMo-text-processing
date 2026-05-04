@@ -1,6 +1,4 @@
 include LICENSE
-include NEWS
-include requirements/*
 include pyproject.toml
 
 # Include pre-built grammar files for inference

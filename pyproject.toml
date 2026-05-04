@@ -7,7 +7,7 @@ name = "nemo_text_processing"
 version = "1.1.0"
 description = "NeMo Text Processing - Inverse Text Normalization and Text Normalization"
 readme = "README.md"
-license = {text = "Apache-2.0"}
+license = "Apache-2.0"
 authors = [
     {name = "NVIDIA", email = "nemo-toolkit@nvidia.com"}
 ]
@@ -16,7 +16,6 @@ classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
     "Intended Audience :: Science/Research",
-    "License :: OSI Approved :: Apache Software License",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
@@ -26,12 +25,10 @@ classifiers = [
 requires-python = ">=3.10"
 
 # =============================================================================
-# MINIMAL DEPENDENCIES (Inference with pre-built .far files)
+# BASE DEPENDENCIES (always installed)
 # =============================================================================
-# NOTE: pynini must be installed via conda BEFORE pip install:
-#   conda install -c conda-forge pynini
-#
-# These are the only deps needed to load and use pre-built .far grammars
+# pynini 2.1.5+ has pip wheels (bundles openfst) - no conda required.
+# Install with: uv pip install pynini>=2.1.5
 dependencies = [
     "pynini>=2.1.5",
     "regex>=2023.0.0",
@@ -39,10 +36,27 @@ dependencies = [
 
 [project.optional-dependencies]
 # =============================================================================
-# BUILD: Full dependencies for building grammars from source
+# INFERENCE: Minimal deps for running inference with pre-built .far files
 # =============================================================================
-# Install with: uv pip install "nemo-text-processing[build]"
-build = [
+# Install with: uv pip install "nemo-text-processing[inference]"
+# No conda required - pynini 2.1.5+ bundles openfst in its pip wheel.
+#
+# Use this for production/deployment when you have pre-built .far grammars
+inference = [
+    "pynini>=2.1.5",
+    "regex>=2023.0.0",
+]
+
+# =============================================================================
+# TRAINING: Full deps for building grammars from source
+# =============================================================================
+# Install with: uv pip install "nemo-text-processing[training]"
+# No conda required - pynini 2.1.5+ bundles openfst in its pip wheel.
+#
+# Use this when you need to build/train new grammars
+training = [
+    "pynini>=2.1.5",
+    "regex>=2023.0.0",
     "joblib>=1.2.0",
     "sacremoses>=0.0.53",
     "tqdm>=4.64.0",
@@ -50,31 +64,43 @@ build = [
 ]
 
 # =============================================================================
-# FULL: Everything needed for TN/ITN (build + inference)
+# DEV: Development and testing dependencies
 # =============================================================================
-# Install with: uv pip install "nemo-text-processing[full]"
-full = [
-    "nemo_text_processing[build]",
-]
-
-# =============================================================================
-# DEV: Development and testing dependencies  
-# =============================================================================
-# Install with: uv pip install "nemo-text-processing[dev]"
+# Install with: pip install "nemo-text-processing[dev]"
 dev = [
-    "nemo_text_processing[build]",
+    "pynini>=2.1.5",
+    "regex>=2023.0.0",
+    "joblib>=1.2.0",
+    "sacremoses>=0.0.53",
+    "tqdm>=4.64.0",
+    "inflect>=6.0.0",
     "pytest>=7.0.0",
     "pytest-cov>=4.0.0",
+    "pytest-runner>=6.0.0",
     "black>=23.0.0",
     "isort>=5.12.0",
+    "parameterized>=0.9.0",
+    "ruamel.yaml>=0.18.0",
 ]
 
 # =============================================================================
-# ALL: Everything
+# ALL: Everything (training + dev)
 # =============================================================================
+# Install with: pip install "nemo-text-processing[all]"
 all = [
-    "nemo_text_processing[full]",
-    "nemo_text_processing[dev]",
+    "pynini>=2.1.5",
+    "regex>=2023.0.0",
+    "joblib>=1.2.0",
+    "sacremoses>=0.0.53",
+    "tqdm>=4.64.0",
+    "inflect>=6.0.0",
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0",
+    "pytest-runner>=6.0.0",
+    "black>=23.0.0",
+    "isort>=5.12.0",
+    "parameterized>=0.9.0",
+    "ruamel.yaml>=0.18.0",
 ]
 
 [project.urls]
@@ -89,7 +115,6 @@ nemo-itn = "nemo_text_processing.inverse_text_normalization.inverse_normalize:ma
 nemo-tn = "nemo_text_processing.text_normalization.normalize:main"
 
 [tool.setuptools]
-packages = ["nemo_text_processing"]
 include-package-data = true
 
 [tool.setuptools.packages.find]

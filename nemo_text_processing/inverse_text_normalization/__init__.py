@@ -12,12 +12,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from nemo_text_processing.inverse_text_normalization.inverse_normalize import InverseNormalizer
-
-# Lightweight inference using pre-built .far files (minimal dependencies)
+# Lightweight inference using pre-built .far files (minimal dependencies, always available)
 from nemo_text_processing.inverse_text_normalization.itn_inference import (
     ITNInference,
     inverse_normalize,
 )
 
-__all__ = ["InverseNormalizer", "ITNInference", "inverse_normalize"]
+# Full InverseNormalizer requires training deps (joblib, sacremoses, tqdm, inflect)
+# Install with: uv pip install "nemo-text-processing[training]"
+try:
+    from nemo_text_processing.inverse_text_normalization.inverse_normalize import InverseNormalizer
+    __all__ = ["InverseNormalizer", "ITNInference", "inverse_normalize"]
+except ImportError:
+    __all__ = ["ITNInference", "inverse_normalize"]

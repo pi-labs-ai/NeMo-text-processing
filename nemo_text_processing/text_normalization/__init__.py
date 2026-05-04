@@ -12,5 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from nemo_text_processing.text_normalization.normalize import Normalizer
-from nemo_text_processing.text_normalization.normalize_with_audio import NormalizerWithAudio
+# Normalizer requires training deps (tqdm, etc.)
+# Install with: uv pip install "nemo-text-processing[training]"
+try:
+    from nemo_text_processing.text_normalization.normalize import Normalizer
+    from nemo_text_processing.text_normalization.normalize_with_audio import NormalizerWithAudio
+except ImportError:
+    pass
